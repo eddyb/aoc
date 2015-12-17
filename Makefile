@@ -1,10 +1,13 @@
 bin:
 	mkdir $@
 
-bin/%: %.rs %.in | bin
+bin/%-1: %.rs %.in | bin
 	rustc -C opt-level=3 $< -o $@
 
-%.out: bin/%
-	$< > $@ || (rm $@ && exit 1)
+bin/%-2: %.rs %.in | bin
+	rustc -C opt-level=3 --cfg part2 $< -o $@
 
-.PRECIOUS: bin/%
+%.out: bin/%
+	$< | tee $@ || (rm $@ && exit 1)
+
+.PRECIOUS: bin/%-1 bin/%-2
